@@ -1,0 +1,158 @@
+1. Project Summary:
+
+The main objective of this project is to collect cryptocurrency market data, clean and preprocess it, identify market trends and price volatility, and visualize relationships between cryptocurrency prices, market capitalization, and trading volume.
+The project uses the CoinGecko API to collect cryptocurrency data and applies Python data analysis libraries to perform exploratory data analysis (EDA). It also uses interactive visualizations to make the results easier to understand.
+A secondary part of the notebook scrapes book information from the Books to Scrape website, including titles, prices, ratings, and availability.
+
+
+Main objectives:
+•	Collect cryptocurrency market data through an API.
+•	Inspect missing values, duplicates, data types, and outliers.
+•	Categorize cryptocurrencies by market capitalization and volatility.
+•	Identify leading cryptocurrencies by market capitalization and trading volume.
+•	Visualize price, market cap, volume, and price-change relationships.
+•	Practice web scraping and data cleaning using book data.
+
+
+2. Import Libraries Used:
+
+The notebook imports the following libraries for data collection, cleaning, analysis, and visualization.
+Library	Purpose
+pandas	DataFrames, data cleaning, grouping, and analysis.
+numpy	Numerical calculations and handling missing values.
+re	Regular expressions for extracting and cleaning text.
+requests	Fetching cryptocurrency data from an API and website pages.
+BeautifulSoup from bs4	Parsing HTML and scraping book information.
+time	Adding delays between API requests.
+matplotlib.pyplot	Creating charts and plots.
+seaborn	Statistical charts, box plots, count plots, and heatmaps.
+plotly.express	Creating interactive scatter plots.
+
+
+3. Problem Statement:
+
+The cryptocurrency market contains thousands of digital assets with different prices, market capitalizations, trading volumes, and price fluctuations. Understanding these metrics manually is difficult because the data varies significantly across cryptocurrencies.
+This project addresses the following questions:
+1.	Which cryptocurrencies have the highest market capitalization?
+2.	Which cryptocurrencies have the highest trading volume?
+3.	How do cryptocurrency prices relate to market capitalization?
+4.	Which cryptocurrencies experience the greatest 24-hour price changes?
+5.	How can cryptocurrencies be classified into market cap and volatility categories?
+6.	What data-quality issues, such as missing values, duplicate records, and outliers, occur in the dataset?
+The secondary book-data task explores how web scraping can be used to collect product information and prepare it for analysis.
+
+
+4. Data Collection and Preprocessing:
+
+Cryptocurrency dataset
+The notebook retrieves data from the CoinGecko API using the /coins/markets endpoint.
+Records collected
+500
+250 records per page × 2 pages
+Original columns
+26
+
+
+Market and supply information:
+The collected data includes cryptocurrency names, symbols, current prices, market capitalization, trading volume, 24-hour price changes, circulating supply, total supply, and all-time high and low values.
+
+The notebook performs these preprocessing steps:
+
+•	Standardizes column names and text fields.
+•	Removes duplicate cryptocurrency IDs.
+•	Converts numeric fields to appropriate data types.
+•	Converts update timestamps to datetime values.
+•	Checks missing values and invalid prices.
+•	Calculates supply ratios and trading-volume-to-market-cap ratios.
+•	Creates market capitalization and volatility categories.
+•	Detects potential price outliers using the interquartile range (IQR) method.
+
+
+Book dataset:
+
+The notebook also retrieves the first page of Books to Scrape and extracts 20 book records containing titles, prices, ratings, availability, and URLs.
+However, the subsequent cleaning process removes all 20 records because the code expects a numerical stock count in the availability text. The scraped availability values are instead displayed as "In stock". This issue needs to be corrected before the book analysis can produce reliable results.
+
+
+5. Key Insights and Findings:
+
+The following findings are based on the outputs recorded in the notebook. Cryptocurrency values represent the dataset snapshot, not current market prices.
+
+A. Top cryptocurrencies by market capitalization: 
+
+ The top 10 table identifies Bitcoin and Ethereum as the two largest cryptocurrencies in the collected dataset.
+Rank	Cryptocurrency	Market capitalization (approx.)
+1	Bitcoin	$1.553 trillion
+2	Ethereum	$308.9 billion
+3	BNB	$98.2 billion
+4	Solana	$59.9 billion
+5	Zcash	$19.5 billion
+Bitcoin has a substantially larger market capitalization than the other listed assets.
+
+B. Trading volume:
+
+  The notebook identifies Bitcoin and Ethereum as the two leading cryptocurrencies by trading volume.
+•	Bitcoin: approximately $32.28 billion.
+•	Ethereum: approximately $23.71 billion.
+•	Solana: approximately $4.45 billion.
+This suggests that the largest assets by market capitalization also had the highest trading volumes in this snapshot. Trading volume measures trading activity; it does not, by itself, establish profitability or liquidity under all market conditions.
+
+C. Market capitalization categories:
+
+  The notebook uses custom thresholds to classify cryptocurrencies:
+Category	Market capitalization
+Large Cap	$10 billion or more
+Mid Cap	$1 billion to below $10 billion
+Small Cap	$100 million to below $1 billion
+Micro Cap	Below $100 million
+The summary table reports 83 cryptocurrencies after preprocessing and filtering.
+Cryptocurrency Count by Market Cap Category
+Counts reported in the notebook's market cap summary.
+09182736Micro CapSmall CapMid CapLarge Cap
+Micro-cap and small-cap assets account for 59 of the 83 records in this summary. This distribution applies to the notebook's filtered dataset, not necessarily the full cryptocurrency market.
+
+D. Volatility analysis:
+
+  The notebook calculates a volatility score as the absolute value of the 24-hour percentage price change.
+The recorded top 10 most volatile assets include:
+•	Prom — volatility score approximately 12.17.
+•	Uniswap — approximately 7.36.
+•	Ethereum Name Service — approximately 6.34.
+•	Pentagon Chain — approximately 5.88.
+•	Zcash — approximately 5.82.
+The notebook classifies volatility as low, medium, high, or very high. Because the score uses a single 24-hour price-change percentage, it represents short-term price movement rather than a comprehensive historical measure of volatility.
+
+E. Relationship between price and market capitalization:
+
+  The notebook uses scatter plots to compare price against market capitalization and trading volume.
+•	The logarithmic axes make values with very different magnitudes easier to compare.
+•	Bubble sizes represent trading volume.
+•	Colors identify market capitalization or volatility categories.
+•	Interactive hover labels identify individual cryptocurrencies.
+These visualizations help explore the relationships between market size, price, and trading activity. They do not establish that a higher price causes a higher market capitalization.
+
+
+6. Problems Encountered and Their Solutions: 
+
+Problem	Occurrence and impact	Recommended solution
+Missing values	The initial cryptocurrency data contains 696 missing cells, including missing max_supply and roi values.	Inspect missingness by column and handle each field according to its meaning.
+Outlier filtering	The IQR check identifies 92 price outliers, but the next cell retains those outliers rather than removing them.	If the goal is to remove outliers, retain rows where price_outlier is False. Otherwise, keep the rows but label them for further investigation.
+Isolation Forest preparation	The notebook defines feature names such as curent_price and total_volumes, which do not match the actual column names.	Use the correct column names and import and configure IsolationForest if this method is required.
+Book stock extraction	The regex expects availability text like "(10 available)", while the scraped text is "In stock".	Handle "In stock" separately or extract stock counts only when the page actually provides them.
+Empty book dataset	Dropping rows with missing stock counts produces a dataset with zero rows.	Correct the extraction logic, rebuild data_df from the original data list, and rerun the cleaning cells in order.
+Plotly import error	ModuleNotFoundError: No module named 'plotly' occurs when creating interactive charts.	Run %pip install plotly in the notebook's active environment.
+Inconsistent dataset state	Later notebook cells show crypto_df with 83 rows, while the initial API response contains 500.	Keep a separate raw dataset and create a clearly named cleaned dataset to track row counts and transformations.
+
+
+Additional data-quality concern:
+
+The notebook contains a CoinGecko API key directly in a code cell. For security, replace it with an environment variable and rotate the key if it has been exposed in a shared notebook or public location.
+Also, the book-analysis cells should be rerun from the beginning after correcting the stock extraction logic. The final cell reconstructs a 20-row, five-column DataFrame, but this does not automatically restore the derived columns or rerun the earlier cleaning steps.
+
+
+7. Conclusion: 
+
+This project demonstrates the practical application of Python for data collection, preprocessing, exploratory data analysis, and visualization. The cryptocurrency analysis successfully collects 500 records from CoinGecko, examines data quality, creates market capitalization and volatility categories, and identifies leading cryptocurrencies by market capitalization, trading volume, and short-term price movement.
+The analysis highlights the importance of data cleaning and the use of suitable visualizations when comparing assets with widely differing prices and market sizes. It also demonstrates that automated preprocessing must be validated carefully: incorrect outlier filtering can change the dataset substantially, while inappropriate missing-value handling can eliminate an entire dataset, as occurred in the book-analysis section.
+Overall, the cryptocurrency portion provides a useful foundation for market exploration. Before treating its results as definitive, the filtering logic, missing-value handling, and consistency of the final dataset should be reviewed. The book-scraping portion requires correction before meaningful conclusions about book prices, ratings, or availability can be drawn.
+
